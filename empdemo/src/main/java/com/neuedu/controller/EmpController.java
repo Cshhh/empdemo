@@ -24,6 +24,8 @@ public class EmpController {
     private EmpService empService;
     @Autowired
     private DeptService deptService;
+    private Integer pageNum;
+
     @RequestMapping("/emplist")
     public ModelAndView emplist(ModelMap map, @RequestParam(name = "pageNum",defaultValue = "1")int pageNum, HttpSession httpSession){
         ModelAndView modelAndView = new ModelAndView("emplist");
@@ -32,7 +34,7 @@ public class EmpController {
         List<Emp> empList = empService.emplist();
         PageInfo<Emp> pageInfo = new PageInfo<>(empList,10);
         map.put("pageInfo",pageInfo);
-        httpSession.setAttribute("nowPageNum",pageInfo.getPageNum());
+        httpSession.setAttribute("empPageNum",pageInfo.getPageNum());
 //        System.out.println(pageInfo);
         return modelAndView;
     }
@@ -48,7 +50,7 @@ public class EmpController {
     }*/
     @RequestMapping("/deleteEmpById")
     public ModelAndView deleteEmpById(int[] id,HttpSession httpSession){
-        Integer pageNum = (Integer) httpSession.getAttribute("nowPageNum");
+        Integer pageNum = (Integer) httpSession.getAttribute("empPageNum");
         ModelAndView modelAndView = new ModelAndView("redirect:/emp/emplist?pageNum="+pageNum);
         empService.deleteEmpByIds(id);
         return modelAndView;
@@ -78,8 +80,8 @@ public class EmpController {
     }
     @RequestMapping("/updateEmp")
     public String updateEmp(Emp emp,HttpSession httpSession){
-        Integer pageNum = (Integer) httpSession.getAttribute("nowPageNum");
+        Integer pageNum = (Integer) httpSession.getAttribute("empPageNum");
         empService.updateEmpById(emp);
-        return "redirect:/emp/emplist?pageNum="+pageNum;
+        return "redirect:/emp/emplist?pageNum="+ pageNum;
     }
 }
